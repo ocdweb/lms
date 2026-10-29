@@ -54,7 +54,7 @@ export function emailLayout(opts: { eyebrow: string; title: string; intro: strin
   return `<!doctype html><html><body style="margin:0;background:#f4f1ec;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;color:#1c1c19">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ec;padding:32px 16px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #e4dec3;border-radius:16px;padding:32px">
-<tr><td style="font-size:15px;font-weight:700;letter-spacing:-0.01em;padding-bottom:24px">${esc(COMPANY)} <span style="color:#795915">•</span> Leave</td></tr>
+<tr><td style="padding-bottom:24px"><img src="${APP_URL}/legacy-media-logo-dark.png" alt="${esc(COMPANY)}" height="28" style="height:28px;width:auto;border:0;vertical-align:middle"> <span style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#795915;padding-left:10px;vertical-align:middle">Leave</span></td></tr>
 <tr><td style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#795915;padding-bottom:6px">${esc(opts.eyebrow)}</td></tr>
 <tr><td style="font-size:22px;font-weight:600;letter-spacing:-0.015em;padding-bottom:12px">${esc(opts.title)}</td></tr>
 <tr><td style="font-size:15px;line-height:24px;color:#444748;padding-bottom:16px">${esc(opts.intro)}</td></tr>

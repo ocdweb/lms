@@ -14,9 +14,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="min-h-screen grid lg:grid-cols-2">
       <section className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-primary text-on-primary p-12">
-        <div className="flex items-center gap-2.5">
-          <span className="w-9 h-9 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center text-label-lg">LM</span>
-          <span className="text-label-lg">Legacy Media <span className="text-secondary-fixed-dim">• Leave</span></span>
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/legacy-media-logo-white.png" alt="Legacy Media" className="h-9 w-auto" />
+          <span className="h-6 w-px bg-on-primary-container" aria-hidden />
+          <span className="text-label-sm uppercase tracking-widest text-secondary-fixed-dim">Leave</span>
         </div>
         <div className="relative z-10 max-w-md space-y-6">
           <span className="text-label-sm uppercase tracking-widest text-secondary-fixed-dim">Mindful Wellbeing</span>
@@ -33,6 +35,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
       <section className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/legacy-media-logo-dark.png" alt="Legacy Media" className="h-8 w-auto lg:hidden" />
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low text-secondary text-label-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
