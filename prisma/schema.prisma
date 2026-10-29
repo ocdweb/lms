@@ -1,0 +1,133 @@
+// Legacy Media — Leave Management System
+// Date-only fields (startDate, endDate, birthday, holiday dates) are stored as UTC midnight.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         String    @default("EMPLOYEE") // EMPLOYEE | ADMIN
+  status       String    @default("ACTIVE") // ACTIVE | INACTIVE
+  jobTitle     String?
+  department   String?
+  location     String?
+  phone        String?
+  birthday     DateTime?
+  joinedAt     DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  balances         LeaveBalance[]
+  requests         LeaveRequest[]  @relation("RequestOwner")
+  reviewedRequests LeaveRequest[]  @relation("RequestReviewer")
+  recordedRequests LeaveRequest[]  @relation("RequestRecorder")
+  notifications    Notification[]
+}
+
+model LeaveType {
+  id              String  @id @default(cuid())
+  code            String  @unique
+  name            String
+  description     String?
+  icon            String  @default("event") // Material Symbols name
+  accent          String  @default("ink") // ink | gold — progress bar colour
+  defaultQuota    Float   @default(0) // days per year
+  deductsQuota    Boolean @default(true) // false = tracked but no balance limit (e.g. Eid, unpaid)
+  allowPastDates  Boolean @default(false) // e.g. sick leave can be logged after the fact
+  birthdayMonthOnly Boolean @default(false)
+  allowHalfDay    Boolean @default(true)
+  maxDaysPerRequest Float?
+  minNoticeDays   Int     @default(0)
+  active          Boolean @default(true)
+  sortOrder       Int     @default(0)
+  createdAt       DateTime @default(now())
+
+  balances LeaveBalance[]
+  requests LeaveRequest[]
+}
+
+model LeaveBalance {
+  id          String    @id @default(cuid())
+  userId      String
+  leaveTypeId String
+  year        Int
+  allocated   Float
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, leaveTypeId, year])
+}
+
+model LeaveRequest {
+  id               String    @id @default(cuid())
+  userId           String
+  leaveTypeId      String
+  startDate        DateTime
+  endDate          DateTime
+  duration         String    @default("FULL") // FULL | HALF_AM | HALF_PM
+  days             Float
+  reason           String?
+  handoverContact  String?
+  emergencyContact String?
+  status           String    @default("PENDING") // PENDING | APPROVED | REJECTED | CANCELLED
+  adminComment     String?
+  retrospective    Boolean   @default(false)
+  reviewedById     String?
+  reviewedAt       DateTime?
+  recordedById     String? // set when an admin logs leave on an employee's behalf
+  googleEventId    String?
+  adminEmailSent   Boolean   @default(false)
+  employeeEmailSent Boolean  @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user       User      @relation("RequestOwner", fields: [userId], references: [id], onDelete: Cascade)
+  leaveType  LeaveType @relation(fields: [leaveTypeId], references: [id])
+  reviewedBy User?     @relation("RequestReviewer", fields: [reviewedById], references: [id])
+  recordedBy User?     @relation("RequestRecorder", fields: [recordedById], references: [id])
+
+  @@index([userId, status])
+  @@index([startDate])
+}
+
+model Holiday {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  kind      String   @default("GAZETTED") // GAZETTED | OPTIONAL
+  active    Boolean  @default(true) // active holidays are excluded from leave day counts
+  googleEventId String?
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  status    String // SENT | LOGGED | FAILED
+  error     String?
+  createdAt DateTime @default(now())
+}

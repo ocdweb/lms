@@ -1,0 +1,68 @@
+import type { Config } from "tailwindcss";
+
+// Tokens mirror warm_editorial_leave_management/DESIGN.md and the reference screens.
+const font = ["var(--font-jakarta)", "Plus Jakarta Sans", "sans-serif"];
+
+export default {
+  content: ["./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        "outline-variant": "#c4c7c7",
+        "inverse-primary": "#c8c6c5",
+        "on-secondary-container": "#785814",
+        "primary-fixed": "#e5e2e1",
+        "on-primary-fixed": "#1c1b1b",
+        "surface-dim": "#dcdad5",
+        "surface-container-highest": "#e5e2dd",
+        "on-primary-container": "#858383",
+        "on-primary": "#ffffff",
+        "on-surface-variant": "#444748",
+        secondary: "#795915",
+        "inverse-surface": "#31302d",
+        "on-error-container": "#93000a",
+        primary: "#000000",
+        "surface-container-lowest": "#ffffff",
+        surface: "#fcf9f4",
+        "on-error": "#ffffff",
+        "on-secondary": "#ffffff",
+        error: "#ba1a1a",
+        "surface-container-high": "#ebe8e3",
+        "primary-container": "#1c1b1b",
+        "secondary-fixed": "#ffdea7",
+        background: "#fcf9f4",
+        "secondary-container": "#fdd182",
+        "on-surface": "#1c1c19",
+        outline: "#747878",
+        "error-container": "#ffdad6",
+        "secondary-fixed-dim": "#ebc073",
+        "surface-container-low": "#f6f3ee",
+        "surface-container": "#f0ede8",
+        sage: "#3e6b48",
+        "sage-tint": "#edf3ee",
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", "2xl": "1rem", full: "9999px" },
+      fontFamily: { sans: font },
+      fontSize: {
+        "numerical-display": ["2.25rem", { lineHeight: "2.5rem", letterSpacing: "-0.03em", fontWeight: "500" }],
+        "headline-xl": ["2.75rem", { lineHeight: "3.25rem", letterSpacing: "-0.03em", fontWeight: "600" }],
+        "headline-xl-mobile": ["2rem", { lineHeight: "2.5rem", letterSpacing: "-0.025em", fontWeight: "600" }],
+        "headline-lg": ["2rem", { lineHeight: "2.5rem", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "headline-lg-mobile": ["1.625rem", { lineHeight: "2.125rem", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "headline-md": ["1.375rem", { lineHeight: "1.875rem", letterSpacing: "-0.015em", fontWeight: "600" }],
+        "headline-sm": ["1.125rem", { lineHeight: "1.625rem", letterSpacing: "-0.01em", fontWeight: "600" }],
+        "body-lg": ["1.125rem", { lineHeight: "1.75rem", letterSpacing: "-0.005em", fontWeight: "400" }],
+        "body-md": ["0.9375rem", { lineHeight: "1.5rem", letterSpacing: "0em", fontWeight: "400" }],
+        "body-sm": ["0.8125rem", { lineHeight: "1.25rem", letterSpacing: "0.005em", fontWeight: "400" }],
+        "label-lg": ["0.875rem", { lineHeight: "1.25rem", letterSpacing: "0.01em", fontWeight: "600" }],
+        "label-md": ["0.75rem", { lineHeight: "1rem", letterSpacing: "0.02em", fontWeight: "600" }],
+        "label-sm": ["0.6875rem", { lineHeight: "0.875rem", letterSpacing: "0.04em", fontWeight: "600" }],
+      },
+      boxShadow: {
+        card: "0 2px 8px -2px rgba(28,27,24,0.04), 0 1px 2px -1px rgba(28,27,24,0.03)",
+        float: "0 16px 32px -8px rgba(28,27,24,0.08), 0 4px 12px -2px rgba(28,27,24,0.04)",
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config;

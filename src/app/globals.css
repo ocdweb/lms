@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-font-smoothing: antialiased; }
+  body { @apply bg-surface text-on-surface font-sans text-body-md; }
+  ::selection { background: rgba(201, 161, 87, 0.3); }
+  dialog::backdrop { background: rgba(220, 218, 213, 0.45); backdrop-filter: blur(4px); }
+}
+
+@layer components {
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    -webkit-font-smoothing: antialiased;
+  }
+  .card { @apply bg-surface-container-lowest rounded-2xl shadow-card; }
+  .eyebrow { @apply text-label-sm uppercase tracking-widest text-secondary; }
+  .field {
+    @apply w-full bg-surface-container-low px-4 py-3 rounded-lg text-body-md text-on-surface placeholder:text-outline
+      focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-[rgba(201,161,87,0.25)] transition-colors;
+  }
+  .field-label { @apply text-label-md text-on-surface; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg text-label-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn px-5 py-2.5 bg-primary text-on-primary hover:bg-primary-container; }
+  .btn-secondary { @apply btn px-4 py-2.5 bg-surface-container text-on-surface hover:bg-surface-container-high; }
+  .btn-ghost { @apply btn px-3 py-2 text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface; }
+  .btn-danger { @apply btn px-4 py-2.5 bg-error-container/40 text-on-error-container hover:bg-error-container; }
+  .icon-btn { @apply p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors; }
+  .pill-tabs { @apply inline-flex items-center p-1 rounded-full bg-surface-container-low gap-1 overflow-x-auto max-w-full; }
+  .pill-tab { @apply px-3.5 py-1.5 rounded-full text-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap; }
+  .pill-tab-active { @apply bg-surface-container-lowest text-on-surface shadow-[0_1px_2px_rgba(28,27,24,0.04)]; }
+}
