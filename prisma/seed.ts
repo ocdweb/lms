@@ -25,8 +25,17 @@ const EMPLOYEES = [
   { name: "Nadia Kamali", email: "nadia.kamali@legacymedia.com", jobTitle: "Account Director", department: "Sales & Partnerships", location: "Head Office", birthday: "1990-05-30" },
 ];
 
+// Demo employees/requests: on by default locally, off on Vercel unless SEED_DEMO_DATA="true"
+const DEMO = process.env.SEED_DEMO_DATA ? process.env.SEED_DEMO_DATA !== "false" : process.env.VERCEL !== "1";
+
 async function main() {
-  const password = process.env.SEED_PASSWORD || "LegacyLeave!2026";
+  // Deploys run the seed with --if-empty so it only bootstraps a brand-new database
+  if (process.argv.includes("--if-empty") && (await db.user.count()) > 0) {
+    console.log("Database already has users — seed skipped.");
+    return;
+  }
+  const password = process.env.SEED_PASSWORD || (process.env.VERCEL === "1" ? "" : "LegacyLeave!2026");
+  if (!password) throw new Error("Set SEED_PASSWORD in Vercel before the first deploy — it becomes the admin's password.");
   const hash = await bcrypt.hash(password, 10);
   const year = 2026;
 
@@ -48,7 +57,7 @@ async function main() {
   const types = Object.fromEntries((await db.leaveType.findMany()).map((t) => [t.code, t]));
   const allUsers = [admin];
 
-  if (process.env.SEED_DEMO_DATA !== "false") {
+  if (DEMO) {
     for (const e of EMPLOYEES) {
       const u = await db.user.upsert({
         where: { email: e.email },
@@ -69,7 +78,7 @@ async function main() {
     }
   }
 
-  if (process.env.SEED_DEMO_DATA !== "false" && (await db.leaveRequest.count()) === 0) {
+  if (DEMO && (await db.leaveRequest.count()) === 0) {
     const byEmail = Object.fromEntries(allUsers.map((u) => [u.email, u]));
     const req = (email: string, code: string, start: string, end: string, days: number, status: string, reason: string, extra: object = {}) =>
       db.leaveRequest.create({

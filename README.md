@@ -89,19 +89,14 @@ Holidays added from the admin holiday ledger can optionally be pushed to the sam
 The project is set up for Vercel + Neon Postgres in Sydney (`vercel.json` pins functions to `syd1`).
 
 1. **Import** the GitHub repo into Vercel (framework: Next.js). Leave the build settings as they are — Vercel runs
-   `npm run vercel-build`, which generates the Prisma client, applies any pending migrations and builds the app.
+   `npm run vercel-build`, which generates the Prisma client, applies any pending migrations, seeds an empty database and builds the app.
 2. **Database:** Project → Storage → *Create Database* → **Neon**, region **Sydney (ap-southeast-2)**, and connect it to
    the project. This adds `DATABASE_URL` and `DATABASE_URL_UNPOOLED`.
    If preview deployments are enabled, turn on Neon's *preview branches* so previews never migrate the production database.
 3. **Environment variables** (Production): see the checklist below, then deploy.
-4. **Seed once** from your machine against the production database (after the first deploy has created the tables).
-   Copy the two connection strings from Vercel → Storage → your Neon database, then run — inline values override `.env`:
-   ```bash
-   DATABASE_URL="<neon pooled url>" DATABASE_URL_UNPOOLED="<neon direct url>" \
-   SEED_ADMIN_EMAIL="you@oneclickdigital.net.au" SEED_PASSWORD="<strong password>" SEED_DEMO_DATA="false" \
-   npm run db:seed
-   ```
-   The seed is safe to re-run: it only adds what's missing.
+4. **First deploy seeds itself.** When the database has no users yet, the build creates the admin
+   (`SEED_ADMIN_EMAIL` / `SEED_PASSWORD`), the leave types and the holidays — no demo data on Vercel unless
+   `SEED_DEMO_DATA="true"`. Later deploys skip this. Sign in and change the password, then you can delete the `SEED_*` variables.
 5. **Domain:** Project → Settings → Domains → add e.g. `leave.oneclickdigital.net.au`, then create the DNS record Vercel shows
    (a CNAME to `cname.vercel-dns.com` for a subdomain). HTTPS is automatic.
 
@@ -113,7 +108,7 @@ The project is set up for Vercel + Neon Postgres in Sydney (`vercel.json` pins f
 | `APP_URL` | Public URL, e.g. `https://leave.oneclickdigital.net.au` (email links and logo) |
 | `AUTH_SECRET` | New random value: `openssl rand -base64 32` |
 | `APP_TIMEZONE` | `Australia/Sydney` |
-| `SEED_ADMIN_EMAIL`, `SEED_PASSWORD`, `SEED_DEMO_DATA` | Only needed for the one-off seed; use `SEED_DEMO_DATA="false"` |
+| `SEED_ADMIN_EMAIL`, `SEED_PASSWORD` | Your admin login, created on the first deploy (required for it) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `ADMIN_NOTIFY_EMAIL` | Real email delivery |
 | `GOOGLE_CALENDAR_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` | Optional, Google Calendar |
 
