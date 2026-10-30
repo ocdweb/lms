@@ -5,6 +5,7 @@ import { logout } from "@/app/actions/auth";
 import { Logo } from "./Logo";
 import { Icon } from "./Icon";
 import { Avatar, avatarUrl } from "./Avatar";
+import { DropdownMenu } from "./DropdownMenu";
 import { MobileNav, NavLinks, RoleSwitch, type NavItem } from "./NavLinks";
 
 export async function AppHeader({ user }: { user: User }) {
@@ -38,25 +39,20 @@ export async function AppHeader({ user }: { user: User }) {
             <Icon name="add" className="text-base" />
             Book Leave
           </Link>
-          <details className="relative">
-            <summary className="list-none cursor-pointer pl-1" aria-label="Account menu">
-              <Avatar name={user.name} src={avatarUrl(user)} size="sm" />
-            </summary>
-            <div className="absolute right-0 top-12 w-64 card shadow-float p-2 z-50">
-              <div className="px-3.5 py-3 border-b border-surface-container mb-1">
-                <div className="text-label-lg text-on-surface truncate">{user.name}</div>
-                <div className="text-body-sm text-on-surface-variant truncate">{user.email}</div>
-              </div>
-              <Link href="/profile" className="flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface">
-                <Icon name="person" className="text-lg" /> My Profile
-              </Link>
-              <form action={logout}>
-                <button className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface">
-                  <Icon name="logout" className="text-lg" /> Sign out
-                </button>
-              </form>
+          <DropdownMenu label="Account menu" triggerClassName="pl-1" trigger={<Avatar name={user.name} src={avatarUrl(user)} size="sm" />}>
+            <div className="px-3.5 py-3 border-b border-surface-container mb-1">
+              <div className="text-label-lg text-on-surface truncate">{user.name}</div>
+              <div className="text-body-sm text-on-surface-variant truncate">{user.email}</div>
             </div>
-          </details>
+            <Link href="/profile" className="flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface">
+              <Icon name="person" className="text-lg" /> My Profile
+            </Link>
+            <form action={logout}>
+              <button className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface">
+                <Icon name="logout" className="text-lg" /> Sign out
+              </button>
+            </form>
+          </DropdownMenu>
           <MobileNav items={items} />
         </div>
       </div>
