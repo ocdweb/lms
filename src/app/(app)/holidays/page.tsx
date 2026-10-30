@@ -6,7 +6,7 @@ import { calendarConfigured } from "@/lib/config";
 import { addDays, dayNum, formatLong, formatWeekdayLong, isWeekend, monthAbbr, parseISODate, toISODate } from "@/lib/dates";
 import { currentYear, today } from "@/lib/leave";
 import { Icon } from "@/components/Icon";
-import { initials } from "@/components/Avatar";
+import { Avatar, avatarUrl } from "@/components/Avatar";
 import { HolidayLedger } from "@/components/admin/HolidayLedger";
 
 export const metadata: Metadata = { title: "Holidays & Calendar" };
@@ -110,7 +110,7 @@ export default async function HolidaysPage({ searchParams }: { searchParams: Pro
                         l.status === "PENDING" ? "border border-dashed border-outline-variant text-on-surface-variant" : "bg-surface-container-lowest shadow-sm text-on-surface"
                       }`}
                     >
-                      <span className="w-4 h-4 rounded-full bg-surface-container-high text-[8px] flex items-center justify-center shrink-0">{initials(l.user.name)}</span>
+                      <Avatar name={l.user.name} src={avatarUrl(l.user)} size="xs" />
                       <span className="truncate">{l.user.name.split(" ")[0]}</span>
                     </div>
                   ))}

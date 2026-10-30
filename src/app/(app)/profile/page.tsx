@@ -3,7 +3,8 @@ import { requireUser } from "@/lib/auth";
 import { formatLong } from "@/lib/dates";
 import { changePassword } from "@/app/actions/auth";
 import { ActionForm, SubmitButton } from "@/components/ActionForm";
-import { Avatar } from "@/components/Avatar";
+import { avatarUrl } from "@/components/Avatar";
+import { AvatarUploader } from "./AvatarUploader";
 
 export const metadata: Metadata = { title: "My Profile" };
 
@@ -20,13 +21,7 @@ export default async function ProfilePage() {
   ];
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center gap-5">
-        <Avatar name={user.name} size="lg" />
-        <div>
-          <span className="eyebrow">My Profile</span>
-          <h1 className="text-headline-lg-mobile sm:text-headline-lg">{user.name}</h1>
-        </div>
-      </div>
+      <AvatarUploader name={user.name} src={avatarUrl(user)} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section className="card p-6 space-y-3">
           <h2 className="text-headline-sm">Employment details</h2>

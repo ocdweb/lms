@@ -9,6 +9,7 @@ import { PendingCard } from "@/components/admin/PendingCard";
 import { HolidayLedger } from "@/components/admin/HolidayLedger";
 import { EmployeeDirectory, type DirectoryRow } from "@/components/admin/EmployeeDirectory";
 import { AddEmployeeDialog, RecordLeaveDialog } from "@/components/admin/EmployeeDialogs";
+import { avatarUrl } from "@/components/Avatar";
 
 export const metadata: Metadata = { title: "Admin Management" };
 
@@ -42,6 +43,7 @@ export default async function AdminPage() {
     return {
       id: u.id,
       name: u.name,
+      avatar: avatarUrl(u),
       email: u.email,
       jobTitle: u.jobTitle,
       department: u.department,
@@ -158,6 +160,7 @@ export default async function AdminPage() {
               r={{
                 id: r.id,
                 name: r.user.name,
+                avatar: avatarUrl(r.user),
                 department: r.user.department,
                 typeName: r.leaveType.name,
                 range: formatRange(r.startDate, r.endDate) + (r.duration !== "FULL" ? ` (${r.duration === "HALF_AM" ? "1st" : "2nd"} half)` : ""),

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { activeHolidays, currentYear, getBalances, today, totals } from "@/lib/leave";
 import { addDays, parseISODate, toISODate } from "@/lib/dates";
 import { Icon } from "@/components/Icon";
+import { avatarUrl } from "@/components/Avatar";
 import { ApplyWorkspace } from "./ApplyWorkspace";
 
 export const metadata: Metadata = { title: "Apply for Leave" };
@@ -81,6 +82,7 @@ export default async function ApplyPage({ searchParams }: { searchParams: Promis
         team={teamLeave.map((r) => ({
           id: r.id,
           name: r.user.name,
+          avatar: avatarUrl(r.user),
           department: r.user.department ?? "",
           typeName: r.leaveType.name,
           status: r.status,

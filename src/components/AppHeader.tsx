@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { logout } from "@/app/actions/auth";
 import { Logo } from "./Logo";
 import { Icon } from "./Icon";
-import { Avatar } from "./Avatar";
+import { Avatar, avatarUrl } from "./Avatar";
 import { MobileNav, NavLinks, RoleSwitch, type NavItem } from "./NavLinks";
 
 export async function AppHeader({ user }: { user: User }) {
@@ -40,7 +40,7 @@ export async function AppHeader({ user }: { user: User }) {
           </Link>
           <details className="relative">
             <summary className="list-none cursor-pointer pl-1" aria-label="Account menu">
-              <Avatar name={user.name} size="sm" />
+              <Avatar name={user.name} src={avatarUrl(user)} size="sm" />
             </summary>
             <div className="absolute right-0 top-12 w-64 card shadow-float p-2 z-50">
               <div className="px-3.5 py-3 border-b border-surface-container mb-1">

@@ -9,6 +9,7 @@ import { initials } from "../Avatar";
 export type PendingData = {
   id: string;
   name: string;
+  avatar: string | null;
   department: string | null;
   typeName: string;
   range: string;
@@ -27,7 +28,11 @@ export function PendingCard({ r }: { r: PendingData }) {
     <article className="p-6 rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col xl:flex-row xl:items-center justify-between gap-6">
       <div className="flex flex-col sm:flex-row items-start gap-6 min-w-0">
         <div className="w-full sm:w-56 h-32 sm:h-36 rounded-[999px] bg-gradient-to-br from-surface-container-low via-secondary-container/40 to-surface-container-high flex items-center justify-center shrink-0">
-          <span className="text-headline-xl text-on-secondary-container/80">{initials(r.name)}</span>
+          {r.avatar ? (
+            <img src={r.avatar} alt={r.name} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover shadow-sm" />
+          ) : (
+            <span className="text-headline-xl text-on-secondary-container/80">{initials(r.name)}</span>
+          )}
         </div>
         <div className="space-y-2 min-w-0">
           <div className="flex flex-wrap items-center gap-2">

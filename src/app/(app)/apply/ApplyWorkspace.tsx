@@ -26,7 +26,7 @@ type TypeOption = {
   available: number;
 };
 
-type TeamLeave = { id: string; name: string; department: string; typeName: string; status: string; start: string; end: string };
+type TeamLeave = { id: string; name: string; avatar: string | null; department: string; typeName: string; status: string; start: string; end: string };
 
 type Props = {
   today: string;
@@ -411,7 +411,7 @@ export function ApplyWorkspace({ today, year, hasBirthday, prefill, holidays, to
             {overlaps.slice(0, 6).map((m) => (
               <div key={m.id} className="flex items-center justify-between gap-2 p-3 rounded-lg bg-surface-container-low">
                 <div className="flex items-center gap-3 min-w-0">
-                  <Avatar name={m.name} size="sm" />
+                  <Avatar name={m.name} src={m.avatar} size="sm" />
                   <div className="min-w-0">
                     <div className="text-label-md text-on-surface truncate">{m.name}</div>
                     <div className="text-body-sm text-on-surface-variant truncate">

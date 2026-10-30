@@ -5,12 +5,13 @@ import { useState } from "react";
 import { setEmployeeStatus } from "@/app/actions/admin";
 import { ActionForm } from "../ActionForm";
 import { Icon } from "../Icon";
-import { initials } from "../Avatar";
+import { Avatar } from "../Avatar";
 import { QuotaDialog, RecordLeaveDialog, type EmployeeLite, type TypeLite } from "./EmployeeDialogs";
 
 export type DirectoryRow = {
   id: string;
   name: string;
+  avatar: string | null;
   email: string;
   jobTitle: string | null;
   department: string | null;
@@ -100,7 +101,7 @@ export function EmployeeDirectory({ rows, types, employees, year }: { rows: Dire
                   <tr key={r.id} className={`hover:bg-surface-container-low/60 transition-colors ${r.status !== "ACTIVE" ? "opacity-60" : ""}`}>
                     <td className="py-4 px-6">
                       <Link href={`/admin/employees/${r.id}`} className="flex items-center gap-3 group">
-                        <div className="w-9 h-9 rounded-full bg-secondary-container/50 text-on-secondary-container text-label-md flex items-center justify-center shrink-0">{initials(r.name)}</div>
+                        <Avatar name={r.name} src={r.avatar} />
                         <div>
                           <div className="text-label-lg text-on-surface group-hover:underline">
                             {r.name}

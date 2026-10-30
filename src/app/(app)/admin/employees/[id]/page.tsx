@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { DEPARTMENTS } from "@/lib/config";
 import { formatDays, formatLong, formatRange, toISODate } from "@/lib/dates";
 import { currentYear, getBalances, today } from "@/lib/leave";
-import { Avatar } from "@/components/Avatar";
+import { Avatar, avatarUrl } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
 import { QuotaCard } from "@/components/QuotaCard";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -41,7 +41,7 @@ export default async function EmployeePage({ params, searchParams }: { params: P
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
-          <Avatar name={user.name} size="lg" />
+          <Avatar name={user.name} src={avatarUrl(user)} size="lg" />
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-headline-lg-mobile sm:text-headline-lg">{user.name}</h1>
