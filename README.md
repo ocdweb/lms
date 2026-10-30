@@ -31,22 +31,26 @@ A leave portal for Legacy Media employees and administrators, built from the **W
 
 ## Tech stack
 
-Next.js 15 (App Router, Server Actions) · TypeScript · Tailwind CSS · Prisma (SQLite by default) · Nodemailer (SMTP) · Google Calendar API (service account) · JWT session cookies (jose + bcrypt).
+Next.js 15 (App Router, Server Actions) · TypeScript · Tailwind CSS · Prisma + PostgreSQL (Neon in production) · Nodemailer (SMTP) · Google Calendar API (service account) · JWT session cookies (jose + bcrypt).
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env        # then edit AUTH_SECRET and anything else you need
-npx prisma db push          # create the database
+cp .env.example .env        # then set AUTH_SECRET
+npm run db:local            # starts a local Postgres (Prisma Dev) — keep it running, use the TCP URL it prints in .env
+npm run db:deploy           # create the tables
 npm run db:seed             # leave types, holidays, admin + demo employees
 npm run dev                 # http://localhost:3000
 ```
 
+`npm run db:local` runs Prisma's built-in local Postgres, so nothing else needs installing. A free Neon branch works just as well — put its URLs in `.env` instead.
+
 The seeded admin email and the shared demo password come from `SEED_ADMIN_EMAIL` and `SEED_PASSWORD` in `.env`.
 Set `SEED_DEMO_DATA="false"` to seed only the admin, leave types and holidays. Change the admin password after first sign-in (avatar menu → My Profile).
 
-`npm run db:reset` wipes the database and re-seeds it.
+- `npm run db:migrate` — after editing `prisma/schema.prisma`, creates a new migration and applies it locally.
+- `npm run db:reset` — wipes the database, reapplies migrations and re-seeds.
 
 ## Email notifications
 
@@ -80,15 +84,38 @@ Holidays added from the admin holiday ledger can optionally be pushed to the sam
 - The seeded public holidays are the NSW list for 2026–27 (national + NSW). For another state, edit them in Admin → Holiday Ledger or `HOLIDAYS` in `prisma/seed.ts`.
 - Dates use Australian formats and times are shown in `APP_TIMEZONE` (default `Australia/Sydney`).
 
-## Deploying
+## Deploying to Vercel
 
-SQLite is fine for a single server. For serverless hosting (e.g. Vercel) switch to PostgreSQL:
+The project is set up for Vercel + Neon Postgres in Sydney (`vercel.json` pins functions to `syd1`).
 
-1. In `prisma/schema.prisma` set `provider = "postgresql"`.
-2. Set `DATABASE_URL` to the Postgres connection string.
-3. Run `npx prisma db push && npm run db:seed` once, then `npm run build && npm start` (or deploy).
+1. **Import** the GitHub repo into Vercel (framework: Next.js). Leave the build settings as they are — Vercel runs
+   `npm run vercel-build`, which generates the Prisma client, applies any pending migrations and builds the app.
+2. **Database:** Project → Storage → *Create Database* → **Neon**, region **Sydney (ap-southeast-2)**, and connect it to
+   the project. This adds `DATABASE_URL` and `DATABASE_URL_UNPOOLED`.
+   If preview deployments are enabled, turn on Neon's *preview branches* so previews never migrate the production database.
+3. **Environment variables** (Production): see the checklist below, then deploy.
+4. **Seed once** from your machine against the production database (after the first deploy has created the tables).
+   Copy the two connection strings from Vercel → Storage → your Neon database, then run — inline values override `.env`:
+   ```bash
+   DATABASE_URL="<neon pooled url>" DATABASE_URL_UNPOOLED="<neon direct url>" \
+   SEED_ADMIN_EMAIL="you@oneclickdigital.net.au" SEED_PASSWORD="<strong password>" SEED_DEMO_DATA="false" \
+   npm run db:seed
+   ```
+   The seed is safe to re-run: it only adds what's missing.
+5. **Domain:** Project → Settings → Domains → add e.g. `leave.oneclickdigital.net.au`, then create the DNS record Vercel shows
+   (a CNAME to `cname.vercel-dns.com` for a subdomain). HTTPS is automatic.
 
-Set `APP_URL` to the public URL so email links work, and use a long random `AUTH_SECRET`.
+### Production environment variables
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | Added by the Neon integration |
+| `APP_URL` | Public URL, e.g. `https://leave.oneclickdigital.net.au` (email links and logo) |
+| `AUTH_SECRET` | New random value: `openssl rand -base64 32` |
+| `APP_TIMEZONE` | `Australia/Sydney` |
+| `SEED_ADMIN_EMAIL`, `SEED_PASSWORD`, `SEED_DEMO_DATA` | Only needed for the one-off seed; use `SEED_DEMO_DATA="false"` |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `ADMIN_NOTIFY_EMAIL` | Real email delivery |
+| `GOOGLE_CALENDAR_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` | Optional, Google Calendar |
 
 ## Project structure
 

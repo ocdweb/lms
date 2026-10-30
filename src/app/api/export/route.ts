@@ -15,7 +15,7 @@ export async function GET(req: Request) {
         userId: sp.get("userId") || undefined,
         status: sp.get("status") || undefined,
         leaveTypeId: sp.get("type") || undefined,
-        user: sp.get("q") ? { OR: [{ name: { contains: sp.get("q")! } }, { department: { contains: sp.get("q")! } }] } : undefined,
+        user: sp.get("q") ? { OR: [{ name: { contains: sp.get("q")!, mode: "insensitive" } }, { department: { contains: sp.get("q")!, mode: "insensitive" } }] } : undefined,
         endDate: sp.get("from") ? { gte: parseISODate(sp.get("from")!) } : undefined,
         startDate: sp.get("to") ? { lte: parseISODate(sp.get("to")!) } : undefined,
       }

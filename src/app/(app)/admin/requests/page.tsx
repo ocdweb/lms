@@ -20,7 +20,7 @@ export default async function AdminRequestsPage({ searchParams }: { searchParams
   const where: Prisma.LeaveRequestWhereInput = {
     status: sp.status && sp.status !== "ALL" ? sp.status : undefined,
     leaveTypeId: sp.type || undefined,
-    user: sp.q ? { OR: [{ name: { contains: sp.q } }, { email: { contains: sp.q } }, { department: { contains: sp.q } }] } : undefined,
+    user: sp.q ? { OR: [{ name: { contains: sp.q, mode: "insensitive" } }, { email: { contains: sp.q, mode: "insensitive" } }, { department: { contains: sp.q, mode: "insensitive" } }] } : undefined,
     endDate: sp.from ? { gte: parseISODate(sp.from) } : undefined,
     startDate: sp.to ? { lte: parseISODate(sp.to) } : undefined,
   };
