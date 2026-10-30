@@ -16,13 +16,13 @@ export function HolidayLedger({ holidays, showAll = false, today }: { holidays: 
         <div>
           <div className="flex items-center gap-2">
             <Icon name="event_available" className="text-secondary text-xl" />
-            <h3 className="text-headline-sm text-on-surface">Holiday &amp; Eid Exemption Ledger</h3>
+            <h3 className="text-headline-sm text-on-surface">Public Holiday Ledger</h3>
           </div>
-          <p className="text-body-sm text-on-surface-variant">Gazetted holidays switched on are excluded from employee leave deductions.</p>
+          <p className="text-body-sm text-on-surface-variant">Public holidays switched on are excluded from employee leave deductions.</p>
         </div>
         <Dialog
           title="Add Custom Holiday"
-          description="Add a public, Eid or company holiday. Active holidays are excluded from leave day counts."
+          description="Add a public or company holiday. Active holidays are excluded from leave day counts."
           trigger={(
             <button type="button" className="btn-secondary self-start md:self-auto">
               <Icon name="add" className="text-base" /> Add Custom Holiday
@@ -32,7 +32,7 @@ export function HolidayLedger({ holidays, showAll = false, today }: { holidays: 
           <ActionForm action={createHoliday} resetOnSuccess className="space-y-4">
             <label className="block space-y-1.5">
               <span className="field-label">Holiday name</span>
-              <input name="name" required className="field" placeholder="e.g. Eid-ul-Adha" />
+              <input name="name" required className="field" placeholder="e.g. Christmas Day" />
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block space-y-1.5">
@@ -47,7 +47,7 @@ export function HolidayLedger({ holidays, showAll = false, today }: { holidays: 
             <label className="block space-y-1.5">
               <span className="field-label">Type</span>
               <select name="kind" className="field">
-                <option value="GAZETTED">Gazetted — office closed, exempt from quota</option>
+                <option value="GAZETTED">Public holiday — office closed, exempt from quota</option>
                 <option value="OPTIONAL">Optional — listed only, not exempt</option>
               </select>
             </label>
@@ -71,7 +71,7 @@ export function HolidayLedger({ holidays, showAll = false, today }: { holidays: 
               </div>
               <div className="text-body-sm text-on-surface-variant">{h.start === h.end ? formatLong(h.start) : `${formatMonthDay(h.start)} — ${formatLong(h.end)}`}</div>
               <span className="inline-block px-2 py-0.5 rounded bg-surface-container text-label-sm text-on-surface-variant">
-                {h.kind === "GAZETTED" ? "Gazetted" : "Optional"} • {h.active ? "Exempt" : "Not exempt"}
+                {h.kind === "GAZETTED" ? "Public holiday" : "Optional"} • {h.active ? "Exempt" : "Not exempt"}
               </span>
             </div>
             <div className="flex flex-col items-end gap-2 shrink-0">

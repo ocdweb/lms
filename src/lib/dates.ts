@@ -57,10 +57,10 @@ export function countLeaveDays(start: string, end: string, duration: Duration, h
   return { days, weekendDays, holidayHits: [...holidayHits] };
 }
 
-const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-US", { timeZone: "UTC", ...opts });
-const shortFmt = fmt({ month: "short", day: "2-digit", year: "numeric" });
-const monthDayFmt = fmt({ month: "short", day: "2-digit" });
-const longFmt = fmt({ month: "long", day: "2-digit", year: "numeric" });
+const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-AU", { timeZone: "UTC", ...opts });
+const shortFmt = fmt({ month: "short", day: "numeric", year: "numeric" });
+const monthDayFmt = fmt({ month: "short", day: "numeric" });
+const longFmt = fmt({ month: "long", day: "numeric", year: "numeric" });
 
 const asDate = (d: Date | string) => (typeof d === "string" ? parseISODate(d.slice(0, 10)) : d);
 
@@ -68,7 +68,7 @@ export const formatDate = (d: Date | string) => shortFmt.format(asDate(d));
 export const formatMonthDay = (d: Date | string) => monthDayFmt.format(asDate(d));
 export const formatLong = (d: Date | string) => longFmt.format(asDate(d));
 export const formatWeekdayLong = (d: Date | string) =>
-  fmt({ weekday: "long", month: "long", day: "2-digit", year: "numeric" }).format(asDate(d));
+  fmt({ weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(asDate(d));
 export const monthAbbr = (d: Date | string) => fmt({ month: "short" }).format(asDate(d)).toUpperCase();
 export const dayNum = (d: Date | string) => String(asDate(d).getUTCDate()).padStart(2, "0");
 
@@ -84,5 +84,6 @@ export function formatDays(days: number): string {
 }
 
 export function formatDateTime(d: Date, timeZone = "UTC"): string {
-  return new Intl.DateTimeFormat("en-US", { timeZone, month: "short", day: "2-digit", hour: "numeric", minute: "2-digit" }).format(d);
+  // e.g. "30 Oct, 2:15 pm AEDT"
+  return new Intl.DateTimeFormat("en-AU", { timeZone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(d);
 }

@@ -14,7 +14,7 @@ export default async function PolicyPage() {
         <span className="eyebrow">Policy</span>
         <h1 className="text-headline-lg-mobile sm:text-headline-lg">Leave Types &amp; Entitlements</h1>
         <p className="text-body-md text-on-surface-variant max-w-2xl">
-          Working days are counted Monday–Friday. Weekends and gazetted public holidays are never deducted from your balance. Balances reset each calendar year.
+          Working days are counted Monday–Friday. Weekends and public holidays are never deducted from your balance. Balances reset each calendar year.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

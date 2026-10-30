@@ -55,7 +55,7 @@ export default async function DashboardPage() {
               Welcome back, {user.name.split(" ")[0]}. You have <span className="text-secondary">{fmt(t.remaining)} total</span> leave days remaining.
             </h1>
             <p className="text-body-md text-on-surface-variant max-w-2xl">
-              Your balances reflect this year&apos;s entitlements, approved leave and gazetted holidays. Rest is essential; plan seamlessly.
+              Your balances reflect this year&apos;s entitlements, approved leave and public holidays. Rest is essential; plan seamlessly.
             </p>
             <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-container-low text-on-surface-variant text-body-sm max-w-2xl">
               <Icon name="mark_email_read" className="text-secondary text-lg shrink-0 mt-0.5" />
@@ -94,13 +94,13 @@ export default async function DashboardPage() {
           <Link href="/holidays" className="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between shadow-card hover:bg-surface-container transition-colors">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-label-md text-on-surface-variant uppercase tracking-wider">Gazetted Holidays</span>
+                <span className="text-label-md text-on-surface-variant uppercase tracking-wider">Public Holidays</span>
                 <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                   <Icon name="celebration" className="text-base" />
                 </div>
               </div>
               <div className="text-headline-md text-on-surface">Pre-scheduled</div>
-              <span className="text-body-sm text-on-surface-variant">Eid Holidays, National Holidays</span>
+              <span className="text-body-sm text-on-surface-variant">National &amp; NSW public holidays</span>
               <p className="text-label-sm text-secondary">Zero quota deduction applied</p>
             </div>
             <div className="mt-4 pt-4 flex items-center justify-between text-on-surface-variant text-label-sm">
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
           <div className="card p-6 lg:p-7 space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <span className="eyebrow block mb-1">Gazetted Calendar</span>
+                <span className="eyebrow block mb-1">Public Holidays</span>
                 <h3 className="text-headline-md text-on-surface">Upcoming Holidays</h3>
               </div>
               <Icon name="event" className="text-on-surface-variant" />

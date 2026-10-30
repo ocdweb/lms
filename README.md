@@ -8,7 +8,7 @@ A leave portal for Legacy Media employees and administrators, built from the **W
 
 **Employees**
 - Dashboard with remaining balance per leave type (Annual, Casual, Sick, Planned, Birthday, Eid Holidays, Other)
-- Apply for leave: full or half days, live working-day calculation (weekends + gazetted holidays excluded), colleague overlap check, draft saving
+- Apply for leave: full or half days, live working-day calculation (weekends + public holidays excluded), colleague overlap check, draft saving
 - Sick leave (and any type flagged "can apply after the date") can be submitted retrospectively
 - Birthday leave restricted to the employee's birthday month
 - Leave history filtered by Pending / Upcoming / Approved / Rejected / Past, request detail with an approval timeline, withdraw pending requests
@@ -67,7 +67,7 @@ Approved leave is added as an all-day event to one shared company calendar.
    - `GOOGLE_CALENDAR_ID`
    - `GOOGLE_SERVICE_ACCOUNT_EMAIL` (`client_email` from the JSON)
    - `GOOGLE_PRIVATE_KEY` (`private_key` from the JSON, in double quotes, keeping the `\n` sequences)
-   - `APP_TIMEZONE` (e.g. `Asia/Karachi`)
+   - `APP_TIMEZONE` (e.g. `Australia/Sydney`, which switches between AEDT and AEST automatically)
 
 Holidays added from the admin holiday ledger can optionally be pushed to the same calendar.
 
@@ -77,7 +77,8 @@ Holidays added from the admin holiday ledger can optionally be pushed to the sam
 - Balances are per calendar year; missing balances are created from each leave type's default quota.
 - A request is counted against the year it starts in. Pending requests reserve days so employees can't over-book.
 - Admin approval re-checks the balance, so quota edits made after submission are respected.
-- The seeded public holidays are Pakistan's 2026–27 gazetted list; Eid dates are approximate — confirm them each year in the holiday ledger.
+- The seeded public holidays are the NSW list for 2026–27 (national + NSW). For another state, edit them in Admin → Holiday Ledger or `HOLIDAYS` in `prisma/seed.ts`.
+- Dates use Australian formats and times are shown in `APP_TIMEZONE` (default `Australia/Sydney`).
 
 ## Deploying
 

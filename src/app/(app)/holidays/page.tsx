@@ -11,7 +11,7 @@ import { HolidayLedger } from "@/components/admin/HolidayLedger";
 
 export const metadata: Metadata = { title: "Holidays & Calendar" };
 
-const MONTH_FMT = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const MONTH_FMT = new Intl.DateTimeFormat("en-AU", { month: "long", year: "numeric", timeZone: "UTC" });
 
 export default async function HolidaysPage({ searchParams }: { searchParams: Promise<{ m?: string }> }) {
   const user = await requireUser();
@@ -54,7 +54,7 @@ export default async function HolidaysPage({ searchParams }: { searchParams: Pro
             <span className="text-label-sm uppercase tracking-wider text-secondary">Company Calendar</span>
           </div>
           <h1 className="text-headline-xl-mobile sm:text-headline-xl">Holidays &amp; Calendar</h1>
-          <p className="text-body-lg text-on-surface-variant max-w-2xl">Gazetted holidays and who&apos;s out of office. Holidays are automatically excluded from leave calculations.</p>
+          <p className="text-body-lg text-on-surface-variant max-w-2xl">Public holidays and who&apos;s out of office. Holidays are automatically excluded from leave calculations.</p>
         </div>
         <div className="flex items-center gap-3 bg-surface-container-lowest px-4 py-3 rounded-xl shadow-sm self-start md:self-auto">
           <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary">
@@ -132,7 +132,7 @@ export default async function HolidaysPage({ searchParams }: { searchParams: Pro
       ) : (
         <section className="card p-6 lg:p-8 space-y-6">
           <div>
-            <span className="eyebrow block mb-1">Gazetted Calendar</span>
+            <span className="eyebrow block mb-1">Public Holidays</span>
             <h2 className="text-headline-md">Public Holidays</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { HOLIDAYS } from "./holidays";
 
 const db = new PrismaClient();
 const d = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
@@ -10,26 +11,10 @@ const LEAVE_TYPES = [
   { code: "SICK", name: "Sick Leave", icon: "stethoscope", accent: "ink", defaultQuota: 8, allowPastDates: true, description: "Illness or medical appointments. Can be applied for after the leave date (post-recovery)." },
   { code: "PLANNED", name: "Planned Leave", icon: "event_upcoming", accent: "ink", defaultQuota: 5, minNoticeDays: 14, description: "Pre-planned personal commitments such as weddings or family events. Two weeks' notice." },
   { code: "BIRTHDAY", name: "Birthday Leave", icon: "cake", accent: "gold", defaultQuota: 1, birthdayMonthOnly: true, allowHalfDay: false, maxDaysPerRequest: 1, description: "A complimentary day off during your birthday month." },
-  { code: "EID", name: "Eid Holidays", icon: "celebration", accent: "gold", defaultQuota: 0, deductsQuota: false, description: "Additional Eid days beyond the gazetted holidays. Does not deduct from your quota." },
+  { code: "EID", name: "Eid Holidays", icon: "celebration", accent: "gold", defaultQuota: 0, deductsQuota: false, description: "Additional Eid days. Does not deduct from your quota." },
   { code: "OTHER", name: "Other Leave", icon: "more_horiz", accent: "ink", defaultQuota: 0, deductsQuota: false, allowPastDates: true, description: "Compassionate, unpaid or other approved leave. Does not deduct from your quota." },
 ];
 
-const HOLIDAYS = [
-  { name: "Kashmir Solidarity Day", start: "2026-02-05", end: "2026-02-05" },
-  { name: "Eid-ul-Fitr", start: "2026-03-20", end: "2026-03-23" },
-  { name: "Pakistan Day", start: "2026-03-23", end: "2026-03-23" },
-  { name: "Labour Day", start: "2026-05-01", end: "2026-05-01" },
-  { name: "Eid-ul-Adha", start: "2026-05-27", end: "2026-05-29" },
-  { name: "Ashura", start: "2026-06-25", end: "2026-06-26" },
-  { name: "Independence Day", start: "2026-08-14", end: "2026-08-14" },
-  { name: "Eid Milad-un-Nabi", start: "2026-08-26", end: "2026-08-26" },
-  { name: "Iqbal Day", start: "2026-11-09", end: "2026-11-09" },
-  { name: "Quaid-e-Azam Day", start: "2026-12-25", end: "2026-12-25" },
-  { name: "Kashmir Solidarity Day", start: "2027-02-05", end: "2027-02-05" },
-  { name: "Eid-ul-Fitr", start: "2027-03-10", end: "2027-03-12" },
-  { name: "Pakistan Day", start: "2027-03-23", end: "2027-03-23" },
-  { name: "Eid-ul-Adha", start: "2027-05-17", end: "2027-05-19" },
-];
 
 const EMPLOYEES = [
   { name: "Sophia Rahman", email: "sophia.rahman@legacymedia.com", jobTitle: "Senior Editor", department: "Editorial", location: "Head Office", birthday: "1994-11-18" },
@@ -106,7 +91,7 @@ async function main() {
       });
 
     await req("sophia.rahman@legacymedia.com", "ANNUAL", "2026-01-12", "2026-01-16", 5, "APPROVED", "Winter family trip.");
-    await req("sophia.rahman@legacymedia.com", "SICK", "2026-04-06", "2026-04-06", 1, "APPROVED", "Seasonal flu.", { retrospective: true });
+    await req("sophia.rahman@legacymedia.com", "SICK", "2026-04-08", "2026-04-08", 1, "APPROVED", "Seasonal flu.", { retrospective: true });
     await req("sophia.rahman@legacymedia.com", "CASUAL", "2026-07-09", "2026-07-09", 1, "APPROVED", "Home maintenance appointment.");
     await req("sophia.rahman@legacymedia.com", "ANNUAL", "2026-11-23", "2026-11-27", 5, "PENDING", "Year-end break with family.");
     await req("zainab.hassan@legacymedia.com", "ANNUAL", "2026-11-16", "2026-11-20", 5, "PENDING", "Attending sibling's graduation overseas and personal downtime.");
