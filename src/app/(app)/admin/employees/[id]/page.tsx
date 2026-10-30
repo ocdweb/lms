@@ -11,6 +11,8 @@ import { Icon } from "@/components/Icon";
 import { QuotaCard } from "@/components/QuotaCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { RequestActions } from "@/components/admin/RequestActions";
+import { ActionForm, SubmitButton } from "@/components/ActionForm";
+import { removeEmployeeAvatar } from "@/app/actions/admin";
 import { EmployeeAdminPanel } from "./EmployeeAdminPanel";
 
 export const metadata: Metadata = { title: "Employee" };
@@ -51,6 +53,14 @@ export default async function EmployeePage({ params, searchParams }: { params: P
             <p className="text-body-md text-on-surface-variant">
               {[user.jobTitle, user.department, user.location].filter(Boolean).join(" • ") || user.email} • Joined {formatLong(user.joinedAt)}
             </p>
+            {user.avatarUpdatedAt && (
+              <ActionForm action={removeEmployeeAvatar} confirm={`Remove ${user.name}'s profile photo? They'll be notified and can upload a new one.`} className="mt-1">
+                <input type="hidden" name="id" value={user.id} />
+                <SubmitButton pendingText="Removing…" className="inline-flex items-center gap-1 text-label-md text-on-surface-variant hover:text-[#9e3f36] hover:underline disabled:opacity-50">
+                  <Icon name="hide_image" className="text-base" /> Remove photo
+                </SubmitButton>
+              </ActionForm>
+            )}
           </div>
         </div>
         <div className="pill-tabs self-start">

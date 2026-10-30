@@ -222,6 +222,24 @@ export async function deleteEmployee(_prev: ActionState, fd: FormData): Promise<
   return ok(`${user.name} and their leave history were permanently removed.`);
 }
 
+export async function removeEmployeeAvatar(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  const admin = await requireAdmin();
+  const id = str(fd, "id");
+  const user = await db.user.findUnique({ where: { id } });
+  if (!user) return fail("Employee not found.");
+  await db.$transaction([
+    db.userAvatar.deleteMany({ where: { userId: id } }),
+    db.user.update({ where: { id }, data: { avatarUpdatedAt: null } }),
+  ]);
+  if (id !== admin.id) {
+    await db.notification.create({
+      data: { userId: id, title: "Profile photo removed", body: `${admin.name} removed your profile photo. You can upload a new one from My Profile.`, link: "/profile" },
+    });
+  }
+  refresh();
+  return ok(`${user.name}'s profile photo was removed.`);
+}
+
 export async function resetPassword(_prev: ActionState, fd: FormData): Promise<ActionState> {
   await requireAdmin();
   const password = str(fd, "password");
