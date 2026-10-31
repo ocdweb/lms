@@ -13,6 +13,18 @@ const TONE: Record<string, string> = {
   FAILED: "bg-[#fbf2f1] text-[#9e3f36]",
 };
 
+/** Plain-English fix for the SMTP errors people usually hit with Gmail / Google Workspace. */
+function smtpHint(error: string) {
+  if (/535|534|Username and Password not accepted|Invalid login|BadCredentials/i.test(error))
+    return "Gmail rejected the login. SMTP_USER must be the full mailbox address and SMTP_PASS a 16-character App Password (2-Step Verification on), not the normal password.";
+  if (/wrong version number|ssl3_get_record|EPROTO/i.test(error))
+    return "Port and SSL don't match. Use SMTP_PORT=587 with SMTP_SECURE=false, or SMTP_PORT=465 with SMTP_SECURE=true.";
+  if (/ETIMEDOUT|ECONNREFUSED|ENOTFOUND|Greeting never received|Connection timeout/i.test(error))
+    return "Couldn't reach the mail server. Check SMTP_HOST (smtp.gmail.com) and SMTP_PORT (587).";
+  if (/Missing credentials|EAUTH/i.test(error)) return "SMTP_USER or SMTP_PASS is missing.";
+  return null;
+}
+
 export default async function EmailLogPage() {
   await requireAdmin();
   const logs = await db.emailLog.findMany({ orderBy: { createdAt: "desc" }, take: 200 });
@@ -21,13 +33,13 @@ export default async function EmailLogPage() {
       name: "Email (SMTP)",
       icon: "mail",
       on: emailConfigured(),
-      detail: emailConfigured() ? `Sending via ${process.env.SMTP_HOST}` : "Not configured — emails are written to this log instead of being sent. Set SMTP_* in .env.",
+      detail: emailConfigured() ? `Sending via ${process.env.SMTP_HOST}` : "Not configured — emails are written to this log instead of being sent. Set the SMTP_* environment variables.",
     },
     {
       name: "Google Calendar",
       icon: "calendar_month",
       on: calendarConfigured(),
-      detail: calendarConfigured() ? `Approved leave is added to ${process.env.GOOGLE_CALENDAR_ID}` : "Not configured — set GOOGLE_CALENDAR_ID and the service-account credentials in .env.",
+      detail: calendarConfigured() ? `Approved leave is added to ${process.env.GOOGLE_CALENDAR_ID}` : "Not configured — set GOOGLE_CALENDAR_ID and the service-account credentials in the environment variables.",
     },
   ];
   return (
@@ -74,7 +86,15 @@ export default async function EmailLogPage() {
                 <tr key={l.id} className="border-t border-surface-container-low">
                   <td className="py-3 px-6 whitespace-nowrap text-on-surface-variant">{formatDateTime(l.createdAt, TIMEZONE)}</td>
                   <td className="py-3 px-4">{l.to}</td>
-                  <td className="py-3 px-4">{l.subject}</td>
+                  <td className="py-3 px-4">
+                    {l.subject}
+                    {l.error && (
+                      <div className="mt-1 text-[#9e3f36] space-y-0.5">
+                        {smtpHint(l.error) && <p className="font-semibold">{smtpHint(l.error)}</p>}
+                        <p className="text-on-surface-variant break-all">{l.error}</p>
+                      </div>
+                    )}
+                  </td>
                   <td className="py-3 px-6">
                     <span className={`px-2.5 py-0.5 rounded-full text-label-sm ${TONE[l.status]}`} title={l.error ?? undefined}>
                       {l.status === "LOGGED" ? "Logged (dev)" : l.status === "SENT" ? "Sent" : "Failed"}
