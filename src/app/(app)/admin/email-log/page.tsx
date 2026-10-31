@@ -15,6 +15,8 @@ const TONE: Record<string, string> = {
 
 /** Plain-English fix for the SMTP errors people usually hit with Gmail / Google Workspace. */
 function smtpHint(error: string) {
+  if (/530|Authentication Required/i.test(error))
+    return "The server wasn't sent a login at all — SMTP_USER is empty or not set for this environment. Set SMTP_USER and SMTP_PASS, then redeploy.";
   if (/535|534|Username and Password not accepted|Invalid login|BadCredentials/i.test(error))
     return "Gmail rejected the login. SMTP_USER must be the full mailbox address and SMTP_PASS a 16-character App Password (2-Step Verification on), not the normal password.";
   if (/wrong version number|ssl3_get_record|EPROTO/i.test(error))
