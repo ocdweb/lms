@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { requireAdmin } from "@/lib/auth";
+import { syncCalendar } from "@/app/actions/admin";
+import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import { db } from "@/lib/db";
 import { TIMEZONE, calendarConfigured, emailConfigured } from "@/lib/config";
 import { formatDateTime } from "@/lib/dates";
@@ -29,8 +32,11 @@ function smtpHint(error: string) {
 
 export default async function EmailLogPage() {
   await requireAdmin();
-  const logs = await db.emailLog.findMany({ orderBy: { createdAt: "desc" }, take: 200 });
-  const integrations = [
+  const [logs, missingEvents] = await Promise.all([
+    db.emailLog.findMany({ orderBy: { createdAt: "desc" }, take: 200 }),
+    calendarConfigured() ? db.leaveRequest.count({ where: { status: "APPROVED", googleEventId: null } }) : 0,
+  ]);
+  const integrations: { name: string; icon: string; on: boolean; detail: string; extra?: ReactNode }[] = [
     {
       name: "Email (SMTP)",
       icon: "mail",
@@ -42,6 +48,22 @@ export default async function EmailLogPage() {
       icon: "calendar_month",
       on: calendarConfigured(),
       detail: calendarConfigured() ? `Approved leave is added to ${process.env.GOOGLE_CALENDAR_ID}` : "Not configured — set GOOGLE_CALENDAR_ID and the service-account credentials in the environment variables.",
+      extra: calendarConfigured() && (
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <span className={`text-body-sm ${missingEvents ? "text-secondary" : "text-on-surface-variant"}`}>
+            {missingEvents
+              ? `${missingEvents} approved ${missingEvents === 1 ? "leave isn't" : "leaves aren't"} on the calendar yet.`
+              : "All approved leave is on the calendar."}
+          </span>
+          {missingEvents > 0 && (
+            <ActionForm action={syncCalendar}>
+              <SubmitButton pendingText="Syncing…" className="btn-secondary px-3 py-1.5 text-label-md">
+                <Icon name="sync" className="text-base" /> Sync to Google Calendar
+              </SubmitButton>
+            </ActionForm>
+          )}
+        </div>
+      ),
     },
   ];
   return (
@@ -63,6 +85,7 @@ export default async function EmailLogPage() {
                 <span className={`px-2 py-0.5 rounded-full text-label-sm ${i.on ? "bg-sage-tint text-sage" : "bg-surface-container text-on-surface-variant"}`}>{i.on ? "Connected" : "Off"}</span>
               </div>
               <p className="text-body-sm text-on-surface-variant mt-1 break-all">{i.detail}</p>
+              {i.extra}
             </div>
           </div>
         ))}

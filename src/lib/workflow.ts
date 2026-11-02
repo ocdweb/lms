@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "./db";
 import { emailLayout, sendMail } from "./email";
-import { createCalendarEvent, deleteCalendarEvent } from "./calendar";
+import { createCalendarEvent, deleteCalendarEvent, insertCalendarEvent } from "./calendar";
 import { formatDays, formatRange } from "./dates";
 
 // Side effects for leave lifecycle events: in-portal notifications, emails and Google Calendar sync.
@@ -21,17 +21,42 @@ async function adminRecipients() {
   return { emails: fromEnv.length ? fromEnv : admins.map((a) => a.email), adminIds: admins.map((a) => a.id) };
 }
 
+const calendarEvent = (r: FullRequest) => ({
+  summary: `${r.user.name} — ${r.leaveType.name}${durationLabel(r)}`,
+  description: [`${formatDays(r.days)} • ${r.user.department ?? ""}`, r.handoverContact && `Handover: ${r.handoverContact}`]
+    .filter(Boolean)
+    .join("\n"),
+  start: r.startDate,
+  end: r.endDate,
+});
+
 async function syncToCalendar(r: FullRequest) {
   if (r.googleEventId) return;
-  const eventId = await createCalendarEvent({
-    summary: `${r.user.name} — ${r.leaveType.name}${durationLabel(r)}`,
-    description: [`${formatDays(r.days)} • ${r.user.department ?? ""}`, r.handoverContact && `Handover: ${r.handoverContact}`]
-      .filter(Boolean)
-      .join("\n"),
-    start: r.startDate,
-    end: r.endDate,
-  });
+  const eventId = await createCalendarEvent(calendarEvent(r));
   if (eventId) await db.leaveRequest.update({ where: { id: r.id }, data: { googleEventId: eventId } });
+}
+
+/**
+ * Adds approved leave that has no calendar event yet (approved while the calendar was off or misconfigured).
+ * Stops at the first Google error, since it's almost always a setup problem that would fail every event.
+ */
+export async function syncMissingCalendarEvents() {
+  const missing = await db.leaveRequest.findMany({
+    where: { status: "APPROVED", googleEventId: null },
+    include: { user: true, leaveType: true, reviewedBy: true },
+    orderBy: { startDate: "asc" },
+  });
+  let added = 0;
+  for (const r of missing) {
+    try {
+      const eventId = await insertCalendarEvent(calendarEvent(r));
+      if (eventId) await db.leaveRequest.update({ where: { id: r.id }, data: { googleEventId: eventId } });
+      added++;
+    } catch (err) {
+      return { added, remaining: missing.length - added, error: err instanceof Error ? err.message : String(err) };
+    }
+  }
+  return { added, remaining: 0, error: null };
 }
 
 export async function onLeaveSubmitted(requestId: string) {

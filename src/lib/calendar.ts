@@ -19,23 +19,28 @@ function calendar() {
 
 type AllDayEvent = { summary: string; description?: string; start: Date; end: Date; colorId?: string };
 
+/** Inserts an all-day event on the shared company calendar. Throws Google's error on failure. */
+export async function insertCalendarEvent(ev: AllDayEvent): Promise<string | null> {
+  const res = await calendar().events.insert({
+    calendarId: process.env.GOOGLE_CALENDAR_ID!,
+    requestBody: {
+      summary: ev.summary,
+      description: ev.description,
+      colorId: ev.colorId,
+      transparency: "transparent",
+      // Google's all-day end date is exclusive
+      start: { date: toISODate(ev.start), timeZone: TIMEZONE },
+      end: { date: toISODate(addDays(parseISODate(toISODate(ev.end)), 1)), timeZone: TIMEZONE },
+    },
+  });
+  return res.data.id ?? null;
+}
+
 /** Creates an all-day event on the shared company calendar. Returns the event id, or null if disabled/failed. */
 export async function createCalendarEvent(ev: AllDayEvent): Promise<string | null> {
   if (!calendarConfigured()) return null;
   try {
-    const res = await calendar().events.insert({
-      calendarId: process.env.GOOGLE_CALENDAR_ID!,
-      requestBody: {
-        summary: ev.summary,
-        description: ev.description,
-        colorId: ev.colorId,
-        transparency: "transparent",
-        // Google's all-day end date is exclusive
-        start: { date: toISODate(ev.start), timeZone: TIMEZONE },
-        end: { date: toISODate(addDays(parseISODate(toISODate(ev.end)), 1)), timeZone: TIMEZONE },
-      },
-    });
-    return res.data.id ?? null;
+    return await insertCalendarEvent(ev);
   } catch (err) {
     console.error("[calendar] create failed:", err instanceof Error ? err.message : err);
     return null;

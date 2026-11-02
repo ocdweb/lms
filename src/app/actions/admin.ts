@@ -7,7 +7,8 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { parseISODate, type Duration } from "@/lib/dates";
 import { currentYear, ensureBalances, validateLeave } from "@/lib/leave";
-import { onEmployeeCreated, onLeaveCancelled, onLeaveDecided, onLeaveRecorded } from "@/lib/workflow";
+import { onEmployeeCreated, onLeaveCancelled, onLeaveDecided, onLeaveRecorded, syncMissingCalendarEvents } from "@/lib/workflow";
+import { calendarConfigured } from "@/lib/config";
 import { fail, ok, type ActionState } from "@/lib/action-state";
 
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
@@ -357,4 +358,24 @@ export async function deleteHoliday(_prev: ActionState, fd: FormData): Promise<A
   await db.holiday.delete({ where: { id: h.id } });
   refresh();
   return ok(`${h.name} removed.`);
+}
+
+// ── Google Calendar ─────────────────────────────────────
+
+export async function syncCalendar(): Promise<ActionState> {
+  await requireAdmin();
+  if (!calendarConfigured()) return fail("Google Calendar isn't configured.");
+  const { added, remaining, error } = await syncMissingCalendarEvents();
+  refresh();
+  const addedText = `${added} ${added === 1 ? "leave was" : "leaves were"} added to Google Calendar`;
+  if (error) {
+    const hint = /writer access|forbidden|403/i.test(error)
+      ? " Share the calendar with the service account as “Make changes to events”."
+      : /not found|404/i.test(error)
+        ? " Check GOOGLE_CALENDAR_ID and that the calendar is shared with the service account."
+        : "";
+    const reason = error.replace(/\.+$/, "");
+    return fail(`${added ? `${addedText}, but ` : ""}Google Calendar refused the event (${remaining} still missing): ${reason}.${hint}`);
+  }
+  return ok(added ? `${addedText}.` : "All approved leave is already on Google Calendar.");
 }
