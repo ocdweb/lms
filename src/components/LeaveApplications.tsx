@@ -57,7 +57,7 @@ export function LeaveApplications({ rows }: { rows: LeaveRowData[] }) {
       <div className="space-y-3">
         {shown.length === 0 && (
           <div className="p-8 rounded-lg bg-surface text-center text-on-surface-variant text-body-sm">
-            <Icon name="event_busy" className="!text-3xl text-outline !block mb-2" />
+            <Icon name="event_busy" className="text-3xl text-outline block mb-2" />
             No leave applications here yet.
           </div>
         )}

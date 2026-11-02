@@ -34,7 +34,7 @@ export default async function NotificationsPage() {
       <div className="card divide-y divide-surface-container overflow-hidden">
         {items.length === 0 && (
           <div className="p-10 text-center text-on-surface-variant text-body-sm">
-            <Icon name="notifications_off" className="!text-3xl text-outline !block mb-2" />
+            <Icon name="notifications_off" className="text-3xl text-outline block mb-2" />
             You&apos;re all caught up.
           </div>
         )}

@@ -10,10 +10,14 @@
 }
 
 @layer components {
-  .material-symbols-outlined {
+  /* Own class instead of Google's .material-symbols-outlined: Google's stylesheet loads after ours and
+     would force every icon to 24px inline-block, overriding the text-* / display utilities. */
+  .icon {
     font-family: "Material Symbols Outlined";
     font-weight: normal;
     font-style: normal;
+    font-size: 24px;
+    font-feature-settings: "liga";
     line-height: 1;
     letter-spacing: normal;
     text-transform: none;

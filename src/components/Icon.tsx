@@ -2,7 +2,7 @@ export function Icon({ name, className = "", filled = false }: { name: string; c
   return (
     <span
       aria-hidden
-      className={`material-symbols-outlined ${className}`}
+      className={`icon ${className}`}
       style={filled ? { fontVariationSettings: '"FILL" 1' } : undefined}
     >
       {name}
