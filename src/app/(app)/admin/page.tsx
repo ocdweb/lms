@@ -148,7 +148,7 @@ export default async function AdminPage() {
         </div>
         {pending.length === 0 && (
           <div className="card p-10 text-center text-on-surface-variant">
-            <Icon name="task_alt" className="text-4xl text-secondary block mb-2" />
+            <Icon name="task_alt" className="!text-4xl text-secondary !block mb-2" />
             All caught up — no requests are waiting for review.
           </div>
         )}
